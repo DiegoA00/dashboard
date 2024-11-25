@@ -10,6 +10,9 @@ import IndicatorWeather from './components/IndicatorWeather'
 import TableWeather from './components/TableWeather';
 import ControlWeather from './components/ControlWeather';
 
+import LineChartWeather from './components/LineChartWeather';
+
+
 function App() {
   // const [count, setCount] = useState(0)
 
@@ -44,7 +47,9 @@ function App() {
       </Grid>
 
       {/* Gráfico */}
-      <Grid size={{ xs: 12, xl: 4 }}>Elemento: Gráfico 1</Grid>
+      <Grid size={{ xs: 12, xl: 4 }}>
+        <LineChartWeather />
+      </Grid>
 
     </Grid>
   )
