@@ -2,14 +2,62 @@
 // import reactLogo from './assets/react.svg'
 // import viteLogo from '/vite.svg'
 import './App.css'
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+// Personaliza el tema
+const theme = createTheme({
+  palette: {
+    background: {
+      default: '#E3F2FD', // Color de fondo general
+    },
+    primary: {
+      main: '#455A64', // Color del texto y fondo de la barra lateral
+    },
+    secondary: {
+      main: '#FF7043', // Color para íconos, gráficos, y elementos destacados
+    },
+    text: {
+      primary: '#455A64', // Color de texto principal
+      secondary: '#90A4AE', // Color de texto secundario (opcional)
+    },
+  },
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          backgroundColor: '#E3F2FD', // Color de fondo del cuerpo
+        },
+      },
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#FFFFFF', // Fondo para elementos como tarjetas
+          color: '#455A64', // Color de texto en tarjetas
+        },
+      },
+    },
+    MuiSvgIcon: {
+      styleOverrides: {
+        root: {
+          color: '#FF7043', // Color predeterminado de los íconos
+        },
+      },
+    },
+  },
+});
+
+// Icons
+import LocationCityOutlinedIcon from '@mui/icons-material/LocationCityOutlined';
 
 {/* Hooks */ }
 import { useEffect, useState } from 'react';
 
 interface Indicator {
-  title?: String;
-  subtitle?: String;
-  value?: String;
+  title?: string;
+  subtitle?: string;
+  value?: string;
+  icon?: JSX.Element;
 }
 
 import Item from './interface/Item';
@@ -22,26 +70,28 @@ import TableWeather from './components/TableWeather';
 import ControlWeather from './components/ControlWeather';
 
 import LineChartWeather from './components/LineChartWeather';
+import { CssBaseline } from '@mui/material';
+import { WbTwilightOutlined } from '@mui/icons-material';
 
 
 function App() {
 
   {/* Variable de estado y función de actualización */ }
-  let [indicators, setIndicators] = useState<Indicator[]>([])
+  const [indicators, setIndicators] = useState<Indicator[]>([])
 
-  let [items, setItems] = useState<Item[]>([])
+  const [items, setItems] = useState<Item[]>([])
 
-  let [owm, setOWM] = useState(localStorage.getItem("openWeatherMap"))
+  const [owm, setOWM] = useState(localStorage.getItem("openWeatherMap"))
 
   {/* Hook: useEffect */ }
   useEffect(() => {
     const request = async () => {
       {/* Referencia a las claves del LocalStorage: openWeatherMap y expiringTime */ }
-      let savedTextXML = localStorage.getItem("openWeatherMap") || "";
-      let expiringTime = localStorage.getItem("expiringTime");
+      const savedTextXML = localStorage.getItem("openWeatherMap") || "";
+      const expiringTime = localStorage.getItem("expiringTime");
 
       {/* Obtenga la estampa de tiempo actual */ }
-      let nowTime = (new Date()).getTime();
+      const nowTime = (new Date()).getTime();
 
       {/* Verifique si es que no existe la clave expiringTime o si la estampa de tiempo actual supera el tiempo de expiración */ }
       if (expiringTime === null || nowTime > parseInt(expiringTime)) {
@@ -52,9 +102,9 @@ function App() {
         const savedTextXML = await response.text();
 
         {/* Tiempo de expiración */ }
-        let hours = 0.01
-        let delay = hours * 3600000
-        let expiringTime = nowTime + delay
+        const hours = 0.01
+        const delay = hours * 3600000
+        const expiringTime = nowTime + delay
 
 
         {/* En el LocalStorage, almacene el texto en la clave openWeatherMap, estampa actual y estampa de tiempo de expiración */ }
@@ -81,41 +131,51 @@ function App() {
 
         const dataToIndicators: Indicator[] = new Array<Indicator>();
 
-        let dataToItems: Item[] = new Array<Item>();
+        const dataToItems: Item[] = new Array<Item>();
 
         {/* 
               Análisis, extracción y almacenamiento del contenido del XML 
               en el arreglo de resultados
           */}
 
-        let name = xml.getElementsByTagName("name")[0].innerHTML || ""
-        dataToIndicators.push({ "title": "Location", "subtitle": "City", "value": name })
+        const name = xml.getElementsByTagName("name")[0].innerHTML || ""
+        const country = xml.getElementsByTagName("country")[0].innerHTML || ""
+        dataToIndicators.push({ "title": "Ciudad", "subtitle": country, "value": name, icon: <LocationCityOutlinedIcon/> })
 
-        let location = xml.getElementsByTagName("location")[1]
+        const location = xml.getElementsByTagName("location")[1]
 
-        let latitude = location.getAttribute("latitude") || ""
+        const latitude = location.getAttribute("latitude") || ""
         dataToIndicators.push({ "title": "Location", "subtitle": "Latitude", "value": latitude })
 
-        let longitude = location.getAttribute("longitude") || ""
+        const longitude = location.getAttribute("longitude") || ""
         dataToIndicators.push({ "title": "Location", "subtitle": "Longitude", "value": longitude })
 
-        let altitude = location.getAttribute("altitude") || ""
+        const altitude = location.getAttribute("altitude") || ""
         dataToIndicators.push({ "title": "Location", "subtitle": "Altitude", "value": altitude })
+
+        const sun = xml.getElementsByTagName("sun")[0]
+
+        const sunrise = sun.getAttribute("rise")?.split("T") || ""
+        dataToIndicators.push({ "title": "Amanecer", "subtitle": sunrise[0], "value": sunrise[1], "icon": <WbTwilightOutlined /> })
+        
+        const sunset = sun.getAttribute("set")?.split("T") || ""
+        dataToIndicators.push({ "title": "Atardecer", "subtitle": sunset[0], "value": sunset[1], "icon": <WbTwilightOutlined /> })
 
         // console.log(dataToIndicators)
 
         for (let i = 0; i < 6; i++) {
-          let time = xml.getElementsByTagName("time")[i]
+          const time = xml.getElementsByTagName("time")[i]
 
-          let date = time.getAttribute("from")?.split('T')[0] || ""
-          let from = time.getAttribute("from")?.split('T')[1] || ""
-          let to = time.getAttribute("to")?.split('T')[1] || ""
+          const date = time.getAttribute("from")?.split('T')[0] || ""
 
-          let temperatureInKelvin = time.getElementsByTagName("temperature")[0].getAttribute("value") || ""
-          let temperatureInCelsius = (parseFloat(temperatureInKelvin) - 273.15).toFixed(2)
-          let precipitation = time.getElementsByTagName("precipitation")[0].getAttribute("probability") || ""
-          let humidity = time.getElementsByTagName("humidity")[0].getAttribute("value") || ""
-          let windSpeed = time.getElementsByTagName("windSpeed")[0].getAttribute("mps") || ""
+          const from = time.getAttribute("from")?.split('T')[1].slice(0, -3) || ""
+          const to = time.getAttribute("to")?.split('T')[1].slice(0, -3) || ""
+
+          const temperatureInKelvin = time.getElementsByTagName("temperature")[0].getAttribute("value") || ""
+          const temperatureInCelsius = (parseFloat(temperatureInKelvin) - 273.15).toFixed(2)
+          const precipitation = time.getElementsByTagName("precipitation")[0].getAttribute("probability") || ""
+          const humidity = time.getElementsByTagName("humidity")[0].getAttribute("value") || ""
+          const windSpeed = time.getElementsByTagName("windSpeed")[0].getAttribute("mps") || ""
 
           dataToItems.push({
             "date": date,
@@ -142,55 +202,47 @@ function App() {
   }, [owm])
 
   return (
-    <Grid container spacing={5}>
+    <ThemeProvider theme={theme}>
+      <Grid container spacing={5}>
+        <CssBaseline />
 
-      {/* Indicadores */}
-      {/* <Grid size={{ xs: 12, md: 3 }}>
-        <IndicatorWeather title={'Indicator 1'} subtitle={'Unidad 1'} value={"1.23"} />
-      </Grid>
-      <Grid size={{ xs: 12, md: 3 }}>
-        <IndicatorWeather title={'Indicator 2'} subtitle={'Unidad 2'} value={"3.12"} />
-      </Grid>
-      <Grid size={{ xs: 12, md: 3 }}>
-        <IndicatorWeather title={'Indicator 3'} subtitle={'Unidad 3'} value={"2.31"} />
-      </Grid>
-      <Grid size={{ xs: 12, md: 3 }}>
-        <IndicatorWeather title={'Indicator 4'} subtitle={'Unidad 4'} value={"3.21"} />
-      </Grid> */}
-
-      {
-        indicators
-          .map(
-            (indicator, idx) => (
-              <Grid key={idx} size={{ xs: 12, md: 3 }}>
-                <IndicatorWeather
-                  title={indicator["title"]}
-                  subtitle={indicator["subtitle"]}
-                  value={indicator["value"]} />
-              </Grid>
+        {/* Indicadores */}
+        {
+          indicators
+            .map(
+              (indicator, idx) => (
+                <Grid key={idx} size={{ xs: 12, md: 3 }}>
+                  <IndicatorWeather
+                    title={indicator["title"]}
+                    subtitle={indicator["subtitle"]}
+                    value={indicator["value"]}
+                    icon={indicator.icon} 
+                  />
+                </Grid>
+              )
             )
-          )
-      }
+        }
 
-      {/* Tabla */}
-      <Grid size={{ xs: 12, md: 8 }}>
-        {/* Grid Anidado */}
-        <Grid container spacing={2}>
-          <Grid size={{ xs: 12, md: 3 }}>
-            <ControlWeather />
-          </Grid>
-          <Grid size={{ xs: 12, md: 9 }}>
-            <TableWeather itemsIn={items} />
+        {/* Tabla */}
+        <Grid size={{ xs: 12, md: 8 }}>
+          {/* Grid Anidado */}
+          <Grid container spacing={2}>
+            <Grid size={{ xs: 12, md: 3 }}>
+              <ControlWeather />
+            </Grid>
+            <Grid size={{ xs: 12, md: 9 }}>
+              <TableWeather itemsIn={items} />
+            </Grid>
           </Grid>
         </Grid>
-      </Grid>
 
-      {/* Gráfico */}
-      <Grid size={{ xs: 12, md: 4 }}>
-        <LineChartWeather />
-      </Grid>
+        {/* Gráfico */}
+        <Grid size={{ xs: 12, md: 12 }}>
+          <LineChartWeather itemsIn={items} />
+        </Grid>
 
-    </Grid>
+      </Grid>
+    </ThemeProvider>
   )
 }
 

@@ -1,9 +1,9 @@
 export default interface Item {
-    date: String;
-    timeStart: String;
-    timeEnd: String;
-    temperature: String;
-    humidity: String;
-    precipitation: String;
-    windSpeed: String;
+    date: string;
+    timeStart: string;
+    timeEnd: string;
+    temperature: string;
+    humidity: string;
+    precipitation: string;
+    windSpeed: string;
 }

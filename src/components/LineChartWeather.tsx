@@ -1,19 +1,29 @@
 import Paper from '@mui/material/Paper';
 import { LineChart } from '@mui/x-charts/LineChart';
+import Item from '../interface/Item';
+import { useEffect, useState } from 'react';
 
-const uData = [4000, 3000, 2000, 2780, 1890, 2390, 3490];
-const pData = [2400, 1398, 9800, 3908, 4800, 3800, 4300];
-const xLabels = [
-    'Page A',
-    'Page B',
-    'Page C',
-    'Page D',
-    'Page E',
-    'Page F',
-    'Page G',
-];
+interface MyProp {
+    itemsIn: Item[];
+}
 
-export default function LineChartWeather() {
+
+export default function LineChartWeather(props: MyProp) {
+    const [rows, setRows] = useState<Item[]>([]);
+
+    useEffect(() => {
+        setRows(props.itemsIn);
+    }, [props]);
+
+    // const pData = rows.map((row) => row.precipitation);
+
+    const temperatureData = rows.map((row) => parseFloat(row.temperature));
+    const humidityData = rows.map((row) => parseFloat(row.humidity));
+    const precipitationData = rows.map((row) => parseFloat(row.precipitation));
+    // const windSpeedData = rows.map((row) => row.windSpeed);
+
+    const xLabels = rows.map((row) => row.timeStart);
+
     return (
         <Paper
             sx={{
@@ -27,9 +37,11 @@ export default function LineChartWeather() {
             <LineChart
                 width={400}
                 height={250}
+                
                 series={[
-                    { data: pData, label: 'pv' },
-                    { data: uData, label: 'uv' },
+                    { data: temperatureData, label: 'Temperatura' },
+                    { data: humidityData, label: 'Humedad' },
+                    { data: precipitationData, label: 'Precipitación' },
                 ]}
                 xAxis={[{ scaleType: 'point', data: xLabels }]}
             />

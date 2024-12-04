@@ -13,7 +13,7 @@ interface MyProp {
 }
 
 export default function BasicTable(props: MyProp) {
-    let [rows, setRows] = useState<Item[]>([]);
+    const [rows, setRows] = useState<Item[]>([]);
 
     useEffect(() => {
         setRows(props.itemsIn);

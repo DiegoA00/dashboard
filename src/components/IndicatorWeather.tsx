@@ -1,10 +1,12 @@
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
+import Box from '@mui/material/Box';
 
 interface Indicator {
-    title?: String;
-    subtitle?: String;
-    value?: String;
+    title?: string;
+    subtitle?: string;
+    value?: string;
+    icon?: JSX.Element;
 }
 
 export default function IndicatorWeather(config: Indicator) {
@@ -13,17 +15,34 @@ export default function IndicatorWeather(config: Indicator) {
             sx={{
                 p: 2,
                 display: 'flex',
-                flexDirection: 'column'
+                flexDirection: 'column',
+                allignItems: 'center',
+                textAlign: 'center',
+                gap: 1,
+                borderRadius: 2,
+                backgroundColor: '#ffffff'
             }}
         >
-            <Typography component="h2" variant="h6"
-                color="primary" gutterBottom>
+            {config.icon && (
+                <Box
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        mb: 1,
+                    }}
+                >
+                    {config.icon}
+                </Box>
+            )}
+            <Typography component="h2" variant="subtitle1"
+                color="text.secondary" gutterBottom>
                 {config.title}
             </Typography>
-            <Typography component="p" variant="h4">
+            <Typography component="p" variant="h4" color="text.primary">
                 {config.value}
             </Typography>
-            <Typography color="text.secondary" sx={{ flex: 1 }}>
+            <Typography component="p" variant="body2" color="text.secondary">
                 {config.subtitle}
             </Typography>
         </Paper>
