@@ -31,81 +31,115 @@ function App() {
 
   let [items, setItems] = useState<Item[]>([])
 
+  let [owm, setOWM] = useState(localStorage.getItem("openWeatherMap"))
+
   {/* Hook: useEffect */ }
   useEffect(() => {
     const request = async () => {
-      {/* Request */ }
-      const API_KEY = "68dbed2bbf6ea528c73d3d5d21073063"
-      const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=Guayaquil&mode=xml&appid=${API_KEY}`)
-      const savedTextXML = await response.text();
+      {/* Referencia a las claves del LocalStorage: openWeatherMap y expiringTime */ }
+      let savedTextXML = localStorage.getItem("openWeatherMap") || "";
+      let expiringTime = localStorage.getItem("expiringTime");
 
-      {/* XML Parser */ }
-      const parser = new DOMParser();
-      const xml = parser.parseFromString(savedTextXML, "application/xml");
+      {/* Obtenga la estampa de tiempo actual */ }
+      let nowTime = (new Date()).getTime();
 
-      {/* Arreglo para agregar los resultados */ }
+      {/* Verifique si es que no existe la clave expiringTime o si la estampa de tiempo actual supera el tiempo de expiración */ }
+      if (expiringTime === null || nowTime > parseInt(expiringTime)) {
 
-      const dataToIndicators: Indicator[] = new Array<Indicator>();
+        {/* Request */ }
+        const API_KEY = "68dbed2bbf6ea528c73d3d5d21073063"
+        const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=Guayaquil&mode=xml&appid=${API_KEY}`)
+        const savedTextXML = await response.text();
 
-      let dataToItems: Item[] = new Array<Item>();
+        {/* Tiempo de expiración */ }
+        let hours = 0.01
+        let delay = hours * 3600000
+        let expiringTime = nowTime + delay
 
-      {/* 
-          Análisis, extracción y almacenamiento del contenido del XML 
-          en el arreglo de resultados
-      */}
 
-      let name = xml.getElementsByTagName("name")[0].innerHTML || ""
-      dataToIndicators.push({ "title": "Location", "subtitle": "City", "value": name })
+        {/* En el LocalStorage, almacene el texto en la clave openWeatherMap, estampa actual y estampa de tiempo de expiración */ }
+        localStorage.setItem("openWeatherMap", savedTextXML)
+        localStorage.setItem("expiringTime", expiringTime.toString())
+        localStorage.setItem("nowTime", nowTime.toString())
 
-      let location = xml.getElementsByTagName("location")[1]
+        {/* DateTime */ }
+        localStorage.setItem("expiringDateTime", new Date(expiringTime).toString())
+        localStorage.setItem("nowDateTime", new Date(nowTime).toString())
 
-      let latitude = location.getAttribute("latitude") || ""
-      dataToIndicators.push({ "title": "Location", "subtitle": "Latitude", "value": latitude })
+        {/* Modificación de la variable de estado mediante la función de actualización */ }
+        setOWM(savedTextXML)
 
-      let longitude = location.getAttribute("longitude") || ""
-      dataToIndicators.push({ "title": "Location", "subtitle": "Longitude", "value": longitude })
-
-      let altitude = location.getAttribute("altitude") || ""
-      dataToIndicators.push({ "title": "Location", "subtitle": "Altitude", "value": altitude })
-
-      // console.log(dataToIndicators)
-
-      for (let i = 0; i < 6; i++) {
-        let time = xml.getElementsByTagName("time")[i]
-
-        let date = time.getAttribute("from")?.split('T')[0] || ""
-        let from = time.getAttribute("from")?.split('T')[1] || ""
-        let to = time.getAttribute("to")?.split('T')[1] || ""
-
-        let temperatureInKelvin = time.getElementsByTagName("temperature")[0].getAttribute("value") || ""
-        let temperatureInCelsius = (parseFloat(temperatureInKelvin) - 273.15).toFixed(2)
-        let precipitation = time.getElementsByTagName("precipitation")[0].getAttribute("probability") || ""
-        let humidity = time.getElementsByTagName("humidity")[0].getAttribute("value") || ""
-        let windSpeed = time.getElementsByTagName("windSpeed")[0].getAttribute("mps") || ""
-
-        dataToItems.push({
-          "date": date,
-          "timeStart": from,
-          "timeEnd": to,
-          "temperature": temperatureInCelsius,
-          "humidity": humidity,
-          "precipitation": precipitation,
-          "windSpeed": windSpeed
-        })
       }
 
+      {/* Valide el procesamiento con el valor de savedTextXML */ }
+      if (savedTextXML) {
+        {/* XML Parser */ }
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(savedTextXML, "application/xml");
 
+        {/* Arreglo para agregar los resultados */ }
 
-      {/* Modificación de la variable de estado mediante la función de actualización */ }
-      setIndicators(dataToIndicators)
+        const dataToIndicators: Indicator[] = new Array<Indicator>();
 
-      setItems(dataToItems)
+        let dataToItems: Item[] = new Array<Item>();
+
+        {/* 
+              Análisis, extracción y almacenamiento del contenido del XML 
+              en el arreglo de resultados
+          */}
+
+        let name = xml.getElementsByTagName("name")[0].innerHTML || ""
+        dataToIndicators.push({ "title": "Location", "subtitle": "City", "value": name })
+
+        let location = xml.getElementsByTagName("location")[1]
+
+        let latitude = location.getAttribute("latitude") || ""
+        dataToIndicators.push({ "title": "Location", "subtitle": "Latitude", "value": latitude })
+
+        let longitude = location.getAttribute("longitude") || ""
+        dataToIndicators.push({ "title": "Location", "subtitle": "Longitude", "value": longitude })
+
+        let altitude = location.getAttribute("altitude") || ""
+        dataToIndicators.push({ "title": "Location", "subtitle": "Altitude", "value": altitude })
+
+        // console.log(dataToIndicators)
+
+        for (let i = 0; i < 6; i++) {
+          let time = xml.getElementsByTagName("time")[i]
+
+          let date = time.getAttribute("from")?.split('T')[0] || ""
+          let from = time.getAttribute("from")?.split('T')[1] || ""
+          let to = time.getAttribute("to")?.split('T')[1] || ""
+
+          let temperatureInKelvin = time.getElementsByTagName("temperature")[0].getAttribute("value") || ""
+          let temperatureInCelsius = (parseFloat(temperatureInKelvin) - 273.15).toFixed(2)
+          let precipitation = time.getElementsByTagName("precipitation")[0].getAttribute("probability") || ""
+          let humidity = time.getElementsByTagName("humidity")[0].getAttribute("value") || ""
+          let windSpeed = time.getElementsByTagName("windSpeed")[0].getAttribute("mps") || ""
+
+          dataToItems.push({
+            "date": date,
+            "timeStart": from,
+            "timeEnd": to,
+            "temperature": temperatureInCelsius,
+            "humidity": humidity,
+            "precipitation": precipitation,
+            "windSpeed": windSpeed
+          })
+        }
+
+        {/* Modificación de la variable de estado mediante la función de actualización */ }
+        setIndicators(dataToIndicators)
+
+        setItems(dataToItems)
+
+      }
 
     }
 
     request();
 
-  }, [])
+  }, [owm])
 
   return (
     <Grid container spacing={5}>
