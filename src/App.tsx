@@ -1,34 +1,162 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+// import { useState } from 'react'
+// import reactLogo from './assets/react.svg'
+// import viteLogo from '/vite.svg'
 import './App.css'
 
+{/* Hooks */ }
+import { useEffect, useState } from 'react';
+
+interface Indicator {
+  title?: String;
+  subtitle?: String;
+  value?: String;
+}
+
+import Item from './interface/Item';
+
+// Grid version 2
+import Grid from '@mui/material/Grid2'
+import IndicatorWeather from './components/IndicatorWeather'
+
+import TableWeather from './components/TableWeather';
+import ControlWeather from './components/ControlWeather';
+
+import LineChartWeather from './components/LineChartWeather';
+
+
 function App() {
-  const [count, setCount] = useState(0)
+
+  {/* Variable de estado y función de actualización */ }
+  let [indicators, setIndicators] = useState<Indicator[]>([])
+
+  let [items, setItems] = useState<Item[]>([])
+
+  {/* Hook: useEffect */ }
+  useEffect(() => {
+    const request = async () => {
+      {/* Request */ }
+      const API_KEY = "68dbed2bbf6ea528c73d3d5d21073063"
+      const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=Guayaquil&mode=xml&appid=${API_KEY}`)
+      const savedTextXML = await response.text();
+
+      {/* XML Parser */ }
+      const parser = new DOMParser();
+      const xml = parser.parseFromString(savedTextXML, "application/xml");
+
+      {/* Arreglo para agregar los resultados */ }
+
+      const dataToIndicators: Indicator[] = new Array<Indicator>();
+
+      let dataToItems: Item[] = new Array<Item>();
+
+      {/* 
+          Análisis, extracción y almacenamiento del contenido del XML 
+          en el arreglo de resultados
+      */}
+
+      let name = xml.getElementsByTagName("name")[0].innerHTML || ""
+      dataToIndicators.push({ "title": "Location", "subtitle": "City", "value": name })
+
+      let location = xml.getElementsByTagName("location")[1]
+
+      let latitude = location.getAttribute("latitude") || ""
+      dataToIndicators.push({ "title": "Location", "subtitle": "Latitude", "value": latitude })
+
+      let longitude = location.getAttribute("longitude") || ""
+      dataToIndicators.push({ "title": "Location", "subtitle": "Longitude", "value": longitude })
+
+      let altitude = location.getAttribute("altitude") || ""
+      dataToIndicators.push({ "title": "Location", "subtitle": "Altitude", "value": altitude })
+
+      // console.log(dataToIndicators)
+
+      for (let i = 0; i < 6; i++) {
+        let time = xml.getElementsByTagName("time")[i]
+
+        let date = time.getAttribute("from")?.split('T')[0] || ""
+        let from = time.getAttribute("from")?.split('T')[1] || ""
+        let to = time.getAttribute("to")?.split('T')[1] || ""
+
+        let temperatureInKelvin = time.getElementsByTagName("temperature")[0].getAttribute("value") || ""
+        let temperatureInCelsius = (parseFloat(temperatureInKelvin) - 273.15).toFixed(2)
+        let precipitation = time.getElementsByTagName("precipitation")[0].getAttribute("probability") || ""
+        let humidity = time.getElementsByTagName("humidity")[0].getAttribute("value") || ""
+        let windSpeed = time.getElementsByTagName("windSpeed")[0].getAttribute("mps") || ""
+
+        dataToItems.push({
+          "date": date,
+          "timeStart": from,
+          "timeEnd": to,
+          "temperature": temperatureInCelsius,
+          "humidity": humidity,
+          "precipitation": precipitation,
+          "windSpeed": windSpeed
+        })
+      }
+
+
+
+      {/* Modificación de la variable de estado mediante la función de actualización */ }
+      setIndicators(dataToIndicators)
+
+      setItems(dataToItems)
+
+    }
+
+    request();
+
+  }, [])
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <Grid container spacing={5}>
+
+      {/* Indicadores */}
+      {/* <Grid size={{ xs: 12, md: 3 }}>
+        <IndicatorWeather title={'Indicator 1'} subtitle={'Unidad 1'} value={"1.23"} />
+      </Grid>
+      <Grid size={{ xs: 12, md: 3 }}>
+        <IndicatorWeather title={'Indicator 2'} subtitle={'Unidad 2'} value={"3.12"} />
+      </Grid>
+      <Grid size={{ xs: 12, md: 3 }}>
+        <IndicatorWeather title={'Indicator 3'} subtitle={'Unidad 3'} value={"2.31"} />
+      </Grid>
+      <Grid size={{ xs: 12, md: 3 }}>
+        <IndicatorWeather title={'Indicator 4'} subtitle={'Unidad 4'} value={"3.21"} />
+      </Grid> */}
+
+      {
+        indicators
+          .map(
+            (indicator, idx) => (
+              <Grid key={idx} size={{ xs: 12, md: 3 }}>
+                <IndicatorWeather
+                  title={indicator["title"]}
+                  subtitle={indicator["subtitle"]}
+                  value={indicator["value"]} />
+              </Grid>
+            )
+          )
+      }
+
+      {/* Tabla */}
+      <Grid size={{ xs: 12, md: 8 }}>
+        {/* Grid Anidado */}
+        <Grid container spacing={2}>
+          <Grid size={{ xs: 12, md: 3 }}>
+            <ControlWeather />
+          </Grid>
+          <Grid size={{ xs: 12, md: 9 }}>
+            <TableWeather itemsIn={items} />
+          </Grid>
+        </Grid>
+      </Grid>
+
+      {/* Gráfico */}
+      <Grid size={{ xs: 12, md: 4 }}>
+        <LineChartWeather />
+      </Grid>
+
+    </Grid>
   )
 }
 
