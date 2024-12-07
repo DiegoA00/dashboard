@@ -72,6 +72,7 @@ import ControlWeather from './components/ControlWeather';
 import LineChartWeather from './components/LineChartWeather';
 import { CssBaseline } from '@mui/material';
 import { WbTwilightOutlined } from '@mui/icons-material';
+import DrawerAppBar from './components/DrawerAppBar';
 
 
 function App() {
@@ -140,7 +141,7 @@ function App() {
 
         const name = xml.getElementsByTagName("name")[0].innerHTML || ""
         const country = xml.getElementsByTagName("country")[0].innerHTML || ""
-        dataToIndicators.push({ "title": "Ciudad", "subtitle": country, "value": name, icon: <LocationCityOutlinedIcon/> })
+        dataToIndicators.push({ "title": "Ciudad", "subtitle": country, "value": name, icon: <LocationCityOutlinedIcon /> })
 
         const location = xml.getElementsByTagName("location")[1]
 
@@ -157,7 +158,7 @@ function App() {
 
         const sunrise = sun.getAttribute("rise")?.split("T") || ""
         dataToIndicators.push({ "title": "Amanecer", "subtitle": sunrise[0], "value": sunrise[1], "icon": <WbTwilightOutlined /> })
-        
+
         const sunset = sun.getAttribute("set")?.split("T") || ""
         dataToIndicators.push({ "title": "Atardecer", "subtitle": sunset[0], "value": sunset[1], "icon": <WbTwilightOutlined /> })
 
@@ -203,43 +204,53 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
+      <div>
+        <DrawerAppBar />
+      </div>
       <Grid container spacing={5}>
         <CssBaseline />
 
         {/* Indicadores */}
-        {
-          indicators
-            .map(
-              (indicator, idx) => (
-                <Grid key={idx} size={{ xs: 12, md: 3 }}>
-                  <IndicatorWeather
-                    title={indicator["title"]}
-                    subtitle={indicator["subtitle"]}
-                    value={indicator["value"]}
-                    icon={indicator.icon} 
-                  />
-                </Grid>
+        {/* <section id='Información'> */}
+          {
+            indicators
+              .map(
+                (indicator, idx) => (
+                  <Grid key={idx} size={{ xs: 12, md: 3 }}>
+                    <IndicatorWeather
+                      title={indicator["title"]}
+                      subtitle={indicator["subtitle"]}
+                      value={indicator["value"]}
+                      icon={indicator.icon}
+                    />
+                  </Grid>
+                )
               )
-            )
-        }
+          }
+        {/* </section> */}
 
         {/* Tabla */}
-        <Grid size={{ xs: 12, md: 8 }}>
-          {/* Grid Anidado */}
-          <Grid container spacing={2}>
-            <Grid size={{ xs: 12, md: 3 }}>
-              <ControlWeather />
-            </Grid>
-            <Grid size={{ xs: 12, md: 9 }}>
-              <TableWeather itemsIn={items} />
+        <section id='Historial'>
+          <Grid size={{ xs: 12, md: 8 }}>
+            {/* Grid Anidado */}
+            <Grid container spacing={2}>
+              <Grid size={{ xs: 12, md: 3 }}>
+                <ControlWeather />
+              </Grid>
+              <Grid size={{ xs: 12, md: 9 }}>
+                <TableWeather itemsIn={items} />
+              </Grid>
             </Grid>
           </Grid>
-        </Grid>
+        </section>
+
 
         {/* Gráfico */}
-        <Grid size={{ xs: 12, md: 12 }}>
-          <LineChartWeather itemsIn={items} />
-        </Grid>
+        <section id='Gráfico'>
+          <Grid size={{ xs: 12, md: 12 }}>
+            <LineChartWeather itemsIn={items} />
+          </Grid>
+        </section>
 
       </Grid>
     </ThemeProvider>

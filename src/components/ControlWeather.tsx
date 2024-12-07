@@ -18,7 +18,7 @@ export default function ControlWeather() {
     const descriptionRef = useRef<HTMLDivElement>(null);
 
     {/* Variable de estado y función de actualización */ }
-    let [, setSelected] = useState(-1)
+    const [, setSelected] = useState(-1)
 
     {/* Arreglo de objetos */ }
     const items = [
@@ -35,7 +35,7 @@ export default function ControlWeather() {
     {/* Manejador de eventos */ }
     const handleChange = (event: SelectChangeEvent) => {
 
-        let idx = parseInt(event.target.value)
+        const idx = parseInt(event.target.value)
         // alert( idx );
         setSelected(idx);
 
