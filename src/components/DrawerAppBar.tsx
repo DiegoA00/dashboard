@@ -2,7 +2,7 @@ import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
-import Divider from '@mui/material/Divider';
+// import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
@@ -13,20 +13,17 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-
-interface Props {
-    /**
-     * Injected by the documentation to work in an iframe.
-     * You won't need it on your project.
-     */
-    window?: () => Window;
-}
+import { Link } from 'react-scroll/modules';
 
 const drawerWidth = 240;
-const navItems = ['Inicio', 'Información', 'Historial', 'Gráfico'];
+const navItems = [
+    { label: 'Inicio', to: 'inicio' },
+    { label: 'Información', to: 'informacion' },
+    { label: 'Gráfico', to: 'grafico' },
+    { label: 'Historial', to: 'historial' }
+];
 
-export default function DrawerAppBar(props: Props) {
-    const { window } = props;
+export default function DrawerAppBar() {
     const [mobileOpen, setMobileOpen] = React.useState(false);
 
     const handleDrawerToggle = () => {
@@ -38,20 +35,25 @@ export default function DrawerAppBar(props: Props) {
             <Typography variant="h6" sx={{ my: 2 }}>
                 Pronóstico Climático
             </Typography>
-            <Divider />
             <List>
                 {navItems.map((item) => (
-                    <ListItem key={item} disablePadding>
-                        <ListItemButton sx={{ textAlign: 'center' }}>
-                            <ListItemText primary={item} />
+                    <ListItem key={item.label} disablePadding>
+                        <ListItemButton
+                            component={Link}
+                            to={item.to}
+                            spy={true}
+                            smooth={true}
+                            duration={500}
+                            offset={-84}
+                            sx={{ textAlign: 'center' }}
+                        >
+                            <ListItemText primary={item.label} />
                         </ListItemButton>
                     </ListItem>
                 ))}
             </List>
         </Box>
     );
-
-    const container = window !== undefined ? () => window().document.body : undefined;
 
     return (
         <Box sx={{ display: 'flex' }}>
@@ -76,8 +78,17 @@ export default function DrawerAppBar(props: Props) {
                     </Typography>
                     <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
                         {navItems.map((item) => (
-                            <Button key={item} sx={{ color: '#fff' }}>
-                                {item}
+                            <Button
+                                key={item.label}
+                                component={Link}
+                                to={item.to} 
+                                spy={true} // Resalta el botón si la sección está visible
+                                smooth={true}
+                                duration={500}
+                                offset={-84} // Desplazamiento hacia arriba
+                                sx={{ color: '#fff' }}
+                            >
+                                {item.label}
                             </Button>
                         ))}
                     </Box>
@@ -85,7 +96,6 @@ export default function DrawerAppBar(props: Props) {
             </AppBar>
             <nav>
                 <Drawer
-                    container={container}
                     variant="temporary"
                     open={mobileOpen}
                     onClose={handleDrawerToggle}

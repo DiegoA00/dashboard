@@ -18,13 +18,16 @@
     "@mui/icons-material": "^6.1.9",
     "@mui/material": "^6.1.9",
     "@mui/x-charts": "^7.23.0",
+    "express": "^4.21.2",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-scroll": "^1.9.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
+    "@types/react-scroll": "^1.8.10",
     "@vitejs/plugin-react": "^4.3.4",
     "eslint": "^9.15.0",
     "eslint-plugin-react-hooks": "^5.0.0",

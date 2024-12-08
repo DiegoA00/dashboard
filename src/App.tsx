@@ -3,6 +3,8 @@
 // import viteLogo from '/vite.svg'
 import './App.css'
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { Element } from 'react-scroll';
+import { Toolbar } from '@mui/material';
 
 // Personaliza el tema
 const theme = createTheme({
@@ -67,13 +69,24 @@ import Grid from '@mui/material/Grid2'
 import IndicatorWeather from './components/IndicatorWeather'
 
 import TableWeather from './components/TableWeather';
-import ControlWeather from './components/ControlWeather';
+// import ControlWeather from './components/ControlWeather';
 
 import LineChartWeather from './components/LineChartWeather';
 import { CssBaseline } from '@mui/material';
 import { WbTwilightOutlined } from '@mui/icons-material';
 import DrawerAppBar from './components/DrawerAppBar';
 
+
+function convertUTCToLocal(utcTime: string, timezoneOffset: number): string {
+  // Convierte el tiempo UTC a un objeto Date
+  const utcDate = new Date(utcTime);
+
+  // Ajusta el tiempo en milisegundos sumando el offset del timezone
+  const localDate = new Date(utcDate.getTime() + timezoneOffset * 1000);
+
+  // Devuelve la hora local en formato legible
+  return localDate.toLocaleTimeString('es-EC', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+}
 
 function App() {
 
@@ -99,7 +112,9 @@ function App() {
 
         {/* Request */ }
         const API_KEY = "68dbed2bbf6ea528c73d3d5d21073063"
-        const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=Guayaquil&mode=xml&appid=${API_KEY}`)
+        const lang = "es"
+        const units = "metric"
+        const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=Guayaquil&mode=xml&lang=${lang}&units=${units}&appid=${API_KEY}`)
         const savedTextXML = await response.text();
 
         {/* Tiempo de expiración */ }
@@ -143,28 +158,22 @@ function App() {
         const country = xml.getElementsByTagName("country")[0].innerHTML || ""
         dataToIndicators.push({ "title": "Ciudad", "subtitle": country, "value": name, icon: <LocationCityOutlinedIcon /> })
 
-        const location = xml.getElementsByTagName("location")[1]
-
-        const latitude = location.getAttribute("latitude") || ""
-        dataToIndicators.push({ "title": "Location", "subtitle": "Latitude", "value": latitude })
-
-        const longitude = location.getAttribute("longitude") || ""
-        dataToIndicators.push({ "title": "Location", "subtitle": "Longitude", "value": longitude })
-
-        const altitude = location.getAttribute("altitude") || ""
-        dataToIndicators.push({ "title": "Location", "subtitle": "Altitude", "value": altitude })
-
+        const timezone = xml.getElementsByTagName("timezone")[0].innerHTML || ""
         const sun = xml.getElementsByTagName("sun")[0]
 
+        const sunriseUTC = sun.getAttribute("rise") || ""
+        const sunsetUTC = sun.getAttribute("set") || ""
+
+        const sunriseLocal = convertUTCToLocal(sunriseUTC, parseInt(timezone))
+        const sunsetLocal = convertUTCToLocal(sunsetUTC, parseInt(timezone))
+
         const sunrise = sun.getAttribute("rise")?.split("T") || ""
-        dataToIndicators.push({ "title": "Amanecer", "subtitle": sunrise[0], "value": sunrise[1], "icon": <WbTwilightOutlined /> })
+        dataToIndicators.push({ "title": "Amanecer", "subtitle": sunrise[0], "value": sunriseLocal, "icon": <WbTwilightOutlined /> })
 
         const sunset = sun.getAttribute("set")?.split("T") || ""
-        dataToIndicators.push({ "title": "Atardecer", "subtitle": sunset[0], "value": sunset[1], "icon": <WbTwilightOutlined /> })
+        dataToIndicators.push({ "title": "Atardecer", "subtitle": sunset[0], "value": sunsetLocal, "icon": <WbTwilightOutlined /> })
 
-        // console.log(dataToIndicators)
-
-        for (let i = 0; i < 6; i++) {
+        for (let i = 0; i < 40; i++) {
           const time = xml.getElementsByTagName("time")[i]
 
           const date = time.getAttribute("from")?.split('T')[0] || ""
@@ -172,8 +181,7 @@ function App() {
           const from = time.getAttribute("from")?.split('T')[1].slice(0, -3) || ""
           const to = time.getAttribute("to")?.split('T')[1].slice(0, -3) || ""
 
-          const temperatureInKelvin = time.getElementsByTagName("temperature")[0].getAttribute("value") || ""
-          const temperatureInCelsius = (parseFloat(temperatureInKelvin) - 273.15).toFixed(2)
+          const temperature = time.getElementsByTagName("temperature")[0].getAttribute("value") || ""
           const precipitation = time.getElementsByTagName("precipitation")[0].getAttribute("probability") || ""
           const humidity = time.getElementsByTagName("humidity")[0].getAttribute("value") || ""
           const windSpeed = time.getElementsByTagName("windSpeed")[0].getAttribute("mps") || ""
@@ -182,7 +190,7 @@ function App() {
             "date": date,
             "timeStart": from,
             "timeEnd": to,
-            "temperature": temperatureInCelsius,
+            "temperature": temperature,
             "humidity": humidity,
             "precipitation": precipitation,
             "windSpeed": windSpeed
@@ -204,53 +212,67 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <div>
+      {/* <div> */}
         <DrawerAppBar />
-      </div>
+      {/* </div> */}
+      <Toolbar />
       <Grid container spacing={5}>
         <CssBaseline />
-
+        
         {/* Indicadores */}
-        {/* <section id='Información'> */}
-          {
-            indicators
-              .map(
-                (indicator, idx) => (
-                  <Grid key={idx} size={{ xs: 12, md: 3 }}>
-                    <IndicatorWeather
-                      title={indicator["title"]}
-                      subtitle={indicator["subtitle"]}
-                      value={indicator["value"]}
-                      icon={indicator.icon}
-                    />
-                  </Grid>
-                )
-              )
-          }
-        {/* </section> */}
-
-        {/* Tabla */}
-        <section id='Historial'>
-          <Grid size={{ xs: 12, md: 8 }}>
-            {/* Grid Anidado */}
-            <Grid container spacing={2}>
-              <Grid size={{ xs: 12, md: 3 }}>
-                <ControlWeather />
-              </Grid>
-              <Grid size={{ xs: 12, md: 9 }}>
-                <TableWeather itemsIn={items} />
-              </Grid>
+        <Element name="inicio">
+          <section>
+            <Grid container spacing={5}>
+              {
+                indicators
+                  .map(
+                    (indicator, idx) => (
+                      <Grid key={idx} size={{ xs: 12, md: 4 }}>
+                        <IndicatorWeather
+                          title={indicator["title"]}
+                          subtitle={indicator["subtitle"]}
+                          value={indicator["value"]}
+                          icon={indicator.icon}
+                        />
+                      </Grid>
+                    )
+                  )
+              }
             </Grid>
-          </Grid>
-        </section>
-
+          </section>
+        </Element>
 
         {/* Gráfico */}
-        <section id='Gráfico'>
-          <Grid size={{ xs: 12, md: 12 }}>
-            <LineChartWeather itemsIn={items} />
-          </Grid>
-        </section>
+        <Element name="grafico">
+          <section>
+            <Grid container spacing={5}>
+              <Grid size={{ xs: 12, md: 12 }}>
+                <LineChartWeather itemsIn={items} />
+              </Grid>
+            </Grid>
+          </section>
+        </Element>
+
+        {/* Tabla */}
+        <Element name="historial">
+          <section>
+            <Grid container spacing={5}>
+              <Grid size={{ xs: 12, md: 12 }}>
+                {/* Grid Anidado */}
+                {/* <Grid container spacing={2}> */}
+                {/* <Grid size={{ xs: 12, md: 3 }}>
+                    <ControlWeather />
+                  </Grid> */}
+                <Grid size={{ xs: 12, md: 12 }}>
+                  <TableWeather itemsIn={items} />
+                </Grid>
+                {/* </Grid> */}
+              </Grid>
+            </Grid>
+          </section>
+        </Element>
+
+
 
       </Grid>
     </ThemeProvider>
