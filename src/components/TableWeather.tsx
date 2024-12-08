@@ -20,7 +20,7 @@ export default function BasicTable(props: MyProp) {
     const rowsPerPage = 8; // Número de filas por página
 
     // Manejadores de eventos para la paginación
-    const handleChangePage = (event: unknown, newPage: number) => {
+    const handleChangePage = (_event: unknown, newPage: number) => {
         setPage(newPage);
     };
 
