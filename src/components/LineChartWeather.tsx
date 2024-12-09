@@ -19,6 +19,12 @@ export default function LineChartWeather(props: MyProp) {
     const humidityData = rows.map((row) => parseFloat(row.humidity));
     const precipitationData = rows.map((row) => parseFloat(row.precipitation));
 
+    const dataDictionary = {
+        "Temperatura": temperatureData,
+        "Humedad": humidityData,
+        "Precipitación": precipitationData,
+    };
+
     const xLabels = rows.map((row) => row.timeStart);
 
     const variable = "Temperatura";
@@ -38,13 +44,9 @@ export default function LineChartWeather(props: MyProp) {
 
             {/* Componente para un gráfico de líneas */}
             <LineChart
-                width={700} // Adjust the width to occupy the full width minus padding
-                height={250}
-                series={[
-                    { data: temperatureData, label: 'Temperatura' },
-                    { data: humidityData, label: 'Humedad' },
-                    { data: precipitationData, label: 'Precipitación' },
-                ]}
+                width={700}
+                height={400}
+                series={[{ data: dataDictionary[variable], label: variable }]}
                 xAxis={[{ scaleType: 'point', data: xLabels }]}
             />
         </Paper>

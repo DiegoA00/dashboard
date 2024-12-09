@@ -22,9 +22,9 @@ export default function ControlWeather() {
 
     {/* Arreglo de objetos */ }
     const items = [
-        { "name": "Precipitación", "description": "Cantidad de agua que cae sobre una superficie en un período específico." },
+        { "name": "Temperatura", "description": "Medida del calor o frío en el ambiente, generalmente expresada en grados Celsius o Fahrenheit." },
         { "name": "Humedad", "description": "Cantidad de vapor de agua presente en el aire, generalmente expresada como un porcentaje." },
-        { "name": "Temperatura", "description": "Medida del calor o frío en el ambiente, generalmente expresada en grados Celsius o Fahrenheit." }
+        { "name": "Precipitación", "description": "Cantidad de agua que cae sobre una superficie en un período específico." },
     ]
 
     {/* Arreglo de elementos JSX */ }

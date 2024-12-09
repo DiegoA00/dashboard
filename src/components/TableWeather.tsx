@@ -47,13 +47,13 @@ export default function BasicTable(props: MyProp) {
                 <Table aria-label="simple table">
                     <TableHead>
                         <TableRow>
-                            <TableCell align='center'>Fecha</TableCell>
-                            <TableCell align='center'>Hora de inicio</TableCell>
-                            <TableCell align="center">Hora de fin</TableCell>
-                            <TableCell align="center">Temperatura ({/*rows.temperature_units*/}°C)</TableCell>
-                            <TableCell align="center">Humedad (%)</TableCell>
-                            <TableCell align="center">Precipitación (mm)</TableCell>
-                            <TableCell align="center">Velocidad del Viento (m/s)</TableCell>
+                            <TableCell align='center'><b>Fecha</b></TableCell>
+                            <TableCell align='center'><b>Hora de inicio</b></TableCell>
+                            <TableCell align="center"><b>Hora de fin</b></TableCell>
+                            <TableCell align="center"><b>Temperatura ({/*rows.temperature_units*/}°C)</b></TableCell>
+                            <TableCell align="center"><b>Humedad (%)</b></TableCell>
+                            <TableCell align="center"><b>Precipitación (mm)</b></TableCell>
+                            <TableCell align="center"><b>Velocidad del Viento (m/s)</b></TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>

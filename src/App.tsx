@@ -156,8 +156,15 @@ function App() {
 
         const name = xml.getElementsByTagName("name")[0].innerHTML || ""
         const country = xml.getElementsByTagName("country")[0].innerHTML || ""
-        dataToIndicators.push({ "title": "Ciudad", "subtitle": country, "value": name, icon: <LocationCityOutlinedIcon /> })
+        dataToIndicators.push({ "title": "Ciudad", "subtitle": country, "value": name, icon: <LocationCityOutlinedIcon sx={{ fontSize: 80 }} /> })
 
+        
+        const times = xml.getElementsByTagName("time")
+        
+        const climate = times[0].getElementsByTagName("symbol")[0].getAttribute("name") || ""
+        const icon = times[0].getElementsByTagName("symbol")[0].getAttribute("var") || ""
+        dataToIndicators.push({ "title": "Clima", "subtitle": "", "value": climate, "icon": <img src={`https://openweathermap.org/img/wn/${icon}@2x.png`} /> })
+        
         const timezone = xml.getElementsByTagName("timezone")[0].innerHTML || ""
         const sun = xml.getElementsByTagName("sun")[0]
 
@@ -168,13 +175,13 @@ function App() {
         const sunsetLocal = convertUTCToLocal(sunsetUTC, parseInt(timezone))
 
         const sunrise = sun.getAttribute("rise")?.split("T") || ""
-        dataToIndicators.push({ "title": "Amanecer", "subtitle": sunrise[0], "value": sunriseLocal, "icon": <WbTwilightOutlined /> })
+        dataToIndicators.push({ "title": "Amanecer", "subtitle": sunrise[0], "value": sunriseLocal, "icon": <WbTwilightOutlined sx={{ fontSize: 80 }} /> })
 
         const sunset = sun.getAttribute("set")?.split("T") || ""
-        dataToIndicators.push({ "title": "Atardecer", "subtitle": sunset[0], "value": sunsetLocal, "icon": <WbTwilightOutlined /> })
+        dataToIndicators.push({ "title": "Atardecer", "subtitle": sunset[0], "value": sunsetLocal, "icon": <WbTwilightOutlined sx={{ fontSize: 80 }} /> })
 
         for (let i = 0; i < 40; i++) {
-          const time = xml.getElementsByTagName("time")[i]
+          const time = times[i]
 
           const date = time.getAttribute("from")?.split('T')[0] || ""
 
@@ -185,6 +192,7 @@ function App() {
           const precipitation = time.getElementsByTagName("precipitation")[0].getAttribute("probability") || ""
           const humidity = time.getElementsByTagName("humidity")[0].getAttribute("value") || ""
           const windSpeed = time.getElementsByTagName("windSpeed")[0].getAttribute("mps") || ""
+
 
           dataToItems.push({
             "date": date,
@@ -213,21 +221,21 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       {/* <div> */}
-        <DrawerAppBar />
+      <DrawerAppBar />
       {/* </div> */}
       <Toolbar />
       <Grid container spacing={5}>
         <CssBaseline />
-        
+
         {/* Indicadores */}
-        <Element name="inicio">
+        <Element name="informacion">
           <section>
             <Grid container spacing={5}>
               {
                 indicators
                   .map(
                     (indicator, idx) => (
-                      <Grid key={idx} size={{ xs: 12, md: 4 }}>
+                      <Grid key={idx} size={{ xs: 12, md: 6 }}>
                         <IndicatorWeather
                           title={indicator["title"]}
                           subtitle={indicator["subtitle"]}
