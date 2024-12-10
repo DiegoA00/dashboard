@@ -1,10 +1,32 @@
-// import { useState } from 'react'
-// import reactLogo from './assets/react.svg'
-// import viteLogo from '/vite.svg'
 import './App.css'
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Element } from 'react-scroll';
-import { Toolbar } from '@mui/material';
+import { useEffect, useState } from 'react';
+
+// MUI
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { Toolbar, CssBaseline } from '@mui/material';
+import Grid from '@mui/material/Grid2'
+
+// Components
+import IndicatorWeather from './components/IndicatorWeather'
+import TableWeather from './components/TableWeather';
+import LineChartWeather from './components/LineChartWeather';
+import DrawerAppBar from './components/DrawerAppBar';
+
+// Interfaces
+import Item from './interface/Item';
+
+interface Indicator {
+  title?: string;
+  subtitle?: string;
+  value?: string;
+  icon?: JSX.Element;
+}
+
+// Icons
+import LocationCityOutlinedIcon from '@mui/icons-material/LocationCityOutlined';
+import { WbTwilightOutlined } from '@mui/icons-material';
+import ControlWeather from './components/ControlWeather';
 
 // Personaliza el tema
 const theme = createTheme({
@@ -49,34 +71,6 @@ const theme = createTheme({
   },
 });
 
-// Icons
-import LocationCityOutlinedIcon from '@mui/icons-material/LocationCityOutlined';
-
-{/* Hooks */ }
-import { useEffect, useState } from 'react';
-
-interface Indicator {
-  title?: string;
-  subtitle?: string;
-  value?: string;
-  icon?: JSX.Element;
-}
-
-import Item from './interface/Item';
-
-// Grid version 2
-import Grid from '@mui/material/Grid2'
-import IndicatorWeather from './components/IndicatorWeather'
-
-import TableWeather from './components/TableWeather';
-// import ControlWeather from './components/ControlWeather';
-
-import LineChartWeather from './components/LineChartWeather';
-import { CssBaseline } from '@mui/material';
-import { WbTwilightOutlined } from '@mui/icons-material';
-import DrawerAppBar from './components/DrawerAppBar';
-
-
 function convertUTCToLocal(utcTime: string, timezoneOffset: number): string {
   // Convierte el tiempo UTC a un objeto Date
   const utcDate = new Date(utcTime);
@@ -92,6 +86,8 @@ function App() {
 
   {/* Variable de estado y función de actualización */ }
   const [indicators, setIndicators] = useState<Indicator[]>([])
+
+  const [selectedVariable, setSelectedVariable] = useState('Temperatura');
 
   const [items, setItems] = useState<Item[]>([])
 
@@ -158,13 +154,13 @@ function App() {
         const country = xml.getElementsByTagName("country")[0].innerHTML || ""
         dataToIndicators.push({ "title": "Ciudad", "subtitle": country, "value": name, icon: <LocationCityOutlinedIcon sx={{ fontSize: 80 }} /> })
 
-        
+
         const times = xml.getElementsByTagName("time")
-        
+
         const climate = times[0].getElementsByTagName("symbol")[0].getAttribute("name") || ""
         const icon = times[0].getElementsByTagName("symbol")[0].getAttribute("var") || ""
         dataToIndicators.push({ "title": "Clima", "subtitle": "", "value": climate, "icon": <img src={`https://openweathermap.org/img/wn/${icon}@2x.png`} /> })
-        
+
         const timezone = xml.getElementsByTagName("timezone")[0].innerHTML || ""
         const sun = xml.getElementsByTagName("sun")[0]
 
@@ -220,12 +216,14 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      {/* <div> */}
       <DrawerAppBar />
-      {/* </div> */}
       <Toolbar />
-      <Grid container spacing={5}>
-        <CssBaseline />
+      <CssBaseline />
+      <Grid
+        container
+        spacing={{ xs: 2, md: 5 }}
+        justifyContent="center"
+      >
 
         {/* Indicadores */}
         <Element name="informacion">
@@ -235,7 +233,10 @@ function App() {
                 indicators
                   .map(
                     (indicator, idx) => (
-                      <Grid key={idx} size={{ xs: 12, md: 6 }}>
+                      <Grid key={idx}
+                        // size={{ xs: 12, md: 6 }}
+                        size="auto"
+                      >
                         <IndicatorWeather
                           title={indicator["title"]}
                           subtitle={indicator["subtitle"]}
@@ -250,32 +251,48 @@ function App() {
           </section>
         </Element>
 
-        {/* Gráfico */}
+        <Element name='grafico'>
+          <section>
+            <Grid container spacing={5} justifyContent="center">
+              <Element name="controls">
+                <ControlWeather selectedVariable={selectedVariable} setSelectedVariable={setSelectedVariable} />
+              </Element>
+              <Element name="chart">
+                <LineChartWeather selectedVariable={selectedVariable} itemsIn={items} />
+              </Element>
+            </Grid>
+          </section>
+        </Element>
+
+        {/* Gráfico
         <Element name="grafico">
           <section>
             <Grid container spacing={5}>
-              <Grid size={{ xs: 12, md: 12 }}>
+              <Grid
+                // size={{ xs: 12, md: 12 }}
+                size="auto"
+              >
                 <LineChartWeather itemsIn={items} />
               </Grid>
             </Grid>
           </section>
-        </Element>
+        </Element> */}
 
         {/* Tabla */}
         <Element name="historial">
           <section>
             <Grid container spacing={5}>
-              <Grid size={{ xs: 12, md: 12 }}>
-                {/* Grid Anidado */}
-                {/* <Grid container spacing={2}> */}
-                {/* <Grid size={{ xs: 12, md: 3 }}>
+              {/* <Grid size={{ xs: 12, md: 12 }}> */}
+              {/* Grid Anidado */}
+              {/* <Grid container spacing={2}> */}
+              {/* <Grid size={{ xs: 12, md: 3 }}>
                     <ControlWeather />
                   </Grid> */}
-                <Grid size={{ xs: 12, md: 12 }}>
-                  <TableWeather itemsIn={items} />
-                </Grid>
-                {/* </Grid> */}
+              <Grid size={{ xs: 12, md: 12 }}>
+                <TableWeather itemsIn={items} />
               </Grid>
+              {/* </Grid> */}
+              {/* </Grid> */}
             </Grid>
           </section>
         </Element>

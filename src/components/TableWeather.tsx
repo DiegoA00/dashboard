@@ -7,7 +7,8 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Item from '../interface/Item';
 import { useEffect, useState } from 'react';
-import { Grid, TablePagination, Typography } from '@mui/material';
+import { Box, FormControl, InputLabel, MenuItem, Select, TablePagination, Typography } from '@mui/material';
+import Grid from '@mui/material/Grid2'
 
 interface MyProp {
     itemsIn: Item[];
@@ -24,6 +25,18 @@ export default function BasicTable(props: MyProp) {
         setPage(newPage);
     };
 
+    {/* Arreglo de objetos */ }
+    const items = [
+        { "date": "Temperatura", "data": "Medida del calor o frío en el ambiente, generalmente expresada en grados Celsius o Fahrenheit." },
+        { "date": "Humedad", "data": "Cantidad de vapor de agua presente en el aire, generalmente expresada como un porcentaje." },
+        { "date": "Precipitación", "data": "Cantidad de agua que cae sobre una superficie en un período específico." },
+    ]
+
+    // items = props.itemsIn;
+
+    {/* Arreglo de elementos JSX */ }
+    const options = items.map((item, key) => <MenuItem key={key} value={key}>{item["date"]}</MenuItem>)
+
     useEffect(() => {
         setRows(props.itemsIn);
     }, [props]);
@@ -37,10 +50,35 @@ export default function BasicTable(props: MyProp) {
                 width: '100%'
             }}
         >
-            <Grid spacing={4}>    
-                <Typography variant='h4' component='h4'>Historial Climático</Typography>
-                <Grid>
+            <Grid container spacing={4}>
+                <Grid container spacing={2} flexDirection='column'>
+                    {/* <Grid size={{ xs: 12, md: 6 }}> */}
+                    <Typography variant='h4' component='h4'>Historial Climático</Typography>
+                    {/* </Grid> */}
+                    {/* <Grid size={{ xs: 12, md: 6 }}> */}
+                    <Typography variant='body1' component='p'>Datos climáticos de los últimos 5 días</Typography>
+                    {/* </Grid> */}
+                </Grid>
+                <Grid size={{ xs: 12, md: 4 }}>
+                    <Box sx={{ minWidth: 120 }}>
 
+                        <FormControl fullWidth>
+                            <InputLabel id="simple-select-label">Fecha</InputLabel>
+                            <Select
+                                labelId="simple-select-label"
+                                id="simple-select"
+                                label="Variables"
+                                defaultValue='-1'
+                                // onChange={handleChange}
+                            >
+                                <MenuItem key="-1" value="-1" disabled>Seleccione una variable</MenuItem>
+
+                                {options}
+
+                            </Select>
+                        </FormControl>
+
+                    </Box>
                 </Grid>
             </Grid>
             <TableContainer>

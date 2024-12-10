@@ -81,7 +81,7 @@ export default function DrawerAppBar() {
                             <Button
                                 key={item.label}
                                 component={Link}
-                                to={item.to} 
+                                to={item.to}
                                 spy={true} // Resalta el botón si la sección está visible
                                 smooth={true}
                                 duration={500}

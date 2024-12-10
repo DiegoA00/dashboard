@@ -1,5 +1,5 @@
 {/* Hooks */ }
-import { useState, useRef } from 'react';
+// import { useState, useRef } from 'react';
 
 {/* Componentes MUI */ }
 
@@ -11,14 +11,14 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 
 {/* Interfaz SelectChangeEvent */ }
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Select from '@mui/material/Select';
 
-export default function ControlWeather() {
+export default function ControlWeather({ selectedVariable, setSelectedVariable }) {
     {/* Constante de referencia a un elemento HTML */ }
-    const descriptionRef = useRef<HTMLDivElement>(null);
+    // const descriptionRef = useRef<HTMLDivElement>(null);
 
     {/* Variable de estado y función de actualización */ }
-    const [, setSelected] = useState(-1)
+    // const [, setSelected] = useState(-1)
 
     {/* Arreglo de objetos */ }
     const items = [
@@ -28,22 +28,25 @@ export default function ControlWeather() {
     ]
 
     {/* Arreglo de elementos JSX */ }
-    const options = items.map((item, key) => <MenuItem key={key} value={key}>{item["name"]}</MenuItem>)
+    // const options = items.map((item, key) => <MenuItem key={key} value={key}>{item["name"]}</MenuItem>)
 
 
 
     {/* Manejador de eventos */ }
-    const handleChange = (event: SelectChangeEvent) => {
+    // const handleChange = (event: SelectChangeEvent) => {
 
-        const idx = parseInt(event.target.value)
-        // alert( idx );
-        setSelected(idx);
+    //     const idx = parseInt(event.target.value)
+    //     setSelected(idx);
 
-        {/* Modificación de la referencia descriptionRef */ }
-        if (descriptionRef.current !== null) {
-            descriptionRef.current.innerHTML = (idx >= 0) ? items[idx]["description"] : ""
-        }
+    //     {/* Modificación de la referencia descriptionRef */ }
+    //     if (descriptionRef.current !== null) {
+    //         descriptionRef.current.innerHTML = (idx >= 0) ? items[idx]["description"] : ""
+    //     }
 
+    // };
+
+    const handleChange = (event) => {
+        setSelectedVariable(event.target.value);
     };
 
     {/* JSX */ }
@@ -68,20 +71,33 @@ export default function ControlWeather() {
                         labelId="simple-select-label"
                         id="simple-select"
                         label="Variables"
-                        defaultValue='-1'
+                        // defaultValue='-1'
+                        value={selectedVariable}
                         onChange={handleChange}
                     >
-                        <MenuItem key="-1" value="-1" disabled>Seleccione una variable</MenuItem>
+                        {items.map((item, index) => (
+                            <MenuItem key={index} value={item.name}>
+                                {item.name}
+                            </MenuItem>
+                        ))}
+                        {/* <MenuItem key="-1" value="-1" disabled>Seleccione una variable</MenuItem> */}
 
-                        {options}
+                        {/* {options} */}
 
                     </Select>
                 </FormControl>
-
             </Box>
 
             {/* Use la variable de estado para renderizar del item seleccionado */}
-            <Typography ref={descriptionRef} mt={2} component="p" color="text.secondary"/>
+            <Typography
+                // ref={descriptionRef}
+                mt={2}
+                component="p"
+                color="text.secondary"
+            >
+                {items.find((item) => item.name === selectedVariable)?.description || ''}
+            </Typography>
+
 
 
         </Paper>

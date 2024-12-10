@@ -16,11 +16,12 @@ export default function IndicatorWeather(config: Indicator) {
                 p: 2,
                 display: 'flex',
                 flexDirection: 'column',
-                allignItems: 'center',
+                alignItems: 'center',
+                // allignItems: 'center',
                 textAlign: 'center',
                 gap: 1,
                 borderRadius: 2,
-                backgroundColor: '#ffffff'
+                backgroundColor: '#ffffff',
             }}
         >
             {config.icon && (
