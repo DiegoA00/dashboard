@@ -1,5 +1,5 @@
 {/* Hooks */ }
-// import { useState, useRef } from 'react';
+import { useState, useEffect } from 'react';
 
 {/* Componentes MUI */ }
 
@@ -13,9 +13,15 @@ import FormControl from '@mui/material/FormControl';
 {/* Interfaz SelectChangeEvent */ }
 import Select from '@mui/material/Select';
 
-export default function ControlWeather({ selectedVariable, setSelectedVariable }) {
+interface ControlWeatherProps {
+    selectedVariable: string;
+    setSelectedVariable: (value: string) => void;
+}
+
+export default function ControlWeather({ selectedVariable, setSelectedVariable }: ControlWeatherProps) {
     {/* Constante de referencia a un elemento HTML */ }
     // const descriptionRef = useRef<HTMLDivElement>(null);
+    const [description, setDescription] = useState('');
 
     {/* Variable de estado y función de actualización */ }
     // const [, setSelected] = useState(-1)
@@ -30,6 +36,10 @@ export default function ControlWeather({ selectedVariable, setSelectedVariable }
     {/* Arreglo de elementos JSX */ }
     // const options = items.map((item, key) => <MenuItem key={key} value={key}>{item["name"]}</MenuItem>)
 
+    useEffect(() => {
+        const selectedItem = items.find((item) => item.name === selectedVariable);
+        setDescription(selectedItem ? selectedItem.description : '');
+    }, [selectedVariable]);
 
 
     {/* Manejador de eventos */ }
@@ -45,9 +55,10 @@ export default function ControlWeather({ selectedVariable, setSelectedVariable }
 
     // };
 
-    const handleChange = (event) => {
+    const handleChange = (event: { target: { value: string; }; }) => {
         setSelectedVariable(event.target.value);
     };
+
 
     {/* JSX */ }
     return (
@@ -95,7 +106,7 @@ export default function ControlWeather({ selectedVariable, setSelectedVariable }
                 component="p"
                 color="text.secondary"
             >
-                {items.find((item) => item.name === selectedVariable)?.description || ''}
+                {description}
             </Typography>
 
 
