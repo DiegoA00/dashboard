@@ -22,6 +22,9 @@ export default function IndicatorWeather(config: Indicator) {
                 gap: 1,
                 borderRadius: 2,
                 backgroundColor: '#ffffff',
+                minWidth: 200,
+                maxWidth: { xs: 300, sm: 400},
+                // width: { xs: '100%', sm: 100},
             }}
         >
             {config.icon && (

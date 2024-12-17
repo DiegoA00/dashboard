@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 
 // MUI
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { Toolbar, CssBaseline } from '@mui/material';
+import { Toolbar, CssBaseline, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import Grid from '@mui/material/Grid2'
 
 // Components
@@ -93,6 +93,17 @@ function App() {
 
   const [owm, setOWM] = useState(localStorage.getItem("openWeatherMap"))
 
+  // const [city, setCity] = useState('Guayaquil');
+  // const [units, setUnits] = useState('metric');
+
+  // const handleCityChange = (event, value) => {
+  //   setCity(value);
+  // };
+
+  // const handleUnitsChange = (event) => {
+  //   setUnits(event.target.value);
+  // };
+
   {/* Hook: useEffect */ }
   useEffect(() => {
     const request = async () => {
@@ -110,6 +121,7 @@ function App() {
         const API_KEY = "68dbed2bbf6ea528c73d3d5d21073063"
         const lang = "es"
         const units = "metric"
+        // const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city},EC&mode=xml&lang=${lang}&units=${units}&appid=${API_KEY}`)
         const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=Guayaquil&mode=xml&lang=${lang}&units=${units}&appid=${API_KEY}`)
         const savedTextXML = await response.text();
 
@@ -215,92 +227,127 @@ function App() {
   }, [owm])
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme} >
       <DrawerAppBar />
       <Toolbar />
       <CssBaseline />
+      <Grid
+        container
+        spacing={2}
+        sx={{
+          padding: 2,
+        }}
+      >
+        <Grid container size={{ xs: 12, md: 12 }} justifyContent="center">
+          <Element name="inicio">
+            <section>
+              <Grid container spacing={5}>
+                <Grid size={{ xs: 12, md: 12 }}>
+                  <h1>Inicio</h1>
+                </Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <FormControl fullWidth>
+                    <InputLabel id="city-label">Ciudad</InputLabel>
+                    <Select
+                      sx={{ minWidth: 120 }}
+                      labelId="city-label"
+                      // value={city}
+                      label="Ciudad"
+                    // onChange={handleCityChange}
+                    >
+                      {[
+                        'Ambato', 'Azogues', 'Babahoyo', 'Cuenca', 'Guaranda', 'Guayaquil', 'Ibarra', 'Latacunga', 'Loja', 'Macas', 'Machala', 'Nueva Loja', 'Portoviejo', 'Puerto Baquerizo Moreno', 'Puyo', 'Quito', 'Riobamba', 'Santa Elena', 'Tena', 'Tulcán', 'Zamora'
+                      ].map((city) => (
+                        <MenuItem key={city} value={city}>
+                          {city}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <FormControl fullWidth>
+                    <InputLabel id="units-label">Unidades</InputLabel>
+                    <Select
+                      sx={{ minWidth: 120 }}
+                      labelId="units-label"
+                      // value={units}
+                      label="Unidades"
+                    // onChange={handleUnitsChange}
+                    >
+                      <MenuItem value="metric">Celsius</MenuItem>
+                      <MenuItem value="imperial">Fahrenheit</MenuItem>
+                      <MenuItem value="default">Kelvin</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+              </Grid>
+            </section>
+          </Element>
+        </Grid>
+        <Grid container size={{ xs: 12, md: 4 }}
+          flexDirection={"column"}
+        >
+          <h2>Indicadores</h2>
+          {
+            indicators
+              .map(
+                (indicator, idx) => (
+                  <Grid key={idx}
+                    size={{ xs: 12, md: 12 }}
+                  // size="auto"
+                  >
+                    <IndicatorWeather
+                      title={indicator["title"]}
+                      subtitle={indicator["subtitle"]}
+                      value={indicator["value"]}
+                      icon={indicator.icon}
+                    />
+                  </Grid>
+                )
+              )
+          }
+        </Grid>
+        <Grid container size={{ xs: 12, md: 8 }}
+          flexDirection={"column"}
+        >
+          <h2>Gráfico</h2>
+          <Grid size={{ xs: 12, md: 12 }}>
+            <h3>Control Weather</h3>
+            <ControlWeather selectedVariable={selectedVariable} setSelectedVariable={setSelectedVariable} />
+          </Grid>
+          <Grid size={{ xs: 12, md: 12 }}>
+            <h3>Line Chart Weather</h3>
+            <LineChartWeather selectedVariable={selectedVariable} itemsIn={items} />
+          </Grid>
+        </Grid>
+        <Element name="historial">
+          <section>
+            <Grid size={{ xs: 12, md: 12 }}>
+              <h2>Table Weather</h2>
+              <TableWeather itemsIn={items} />
+            </Grid>
+          </section>
+        </Element>
+      </Grid>
       <Grid
         container
         spacing={{ xs: 2, md: 5 }}
         justifyContent="center"
       >
 
-        {/* Indicadores */}
-        <Element name="informacion">
+        {/* <Element name="informacion">
           <section>
-            <Grid container spacing={5}>
-              {
-                indicators
-                  .map(
-                    (indicator, idx) => (
-                      <Grid key={idx}
-                        // size={{ xs: 12, md: 6 }}
-                        size="auto"
-                      >
-                        <IndicatorWeather
-                          title={indicator["title"]}
-                          subtitle={indicator["subtitle"]}
-                          value={indicator["value"]}
-                          icon={indicator.icon}
-                        />
-                      </Grid>
-                    )
-                  )
-              }
-            </Grid>
           </section>
         </Element>
 
         <Element name='grafico'>
           <section>
-            <Grid container spacing={5} justifyContent="center">
-              <Element name="controls">
-                <ControlWeather selectedVariable={selectedVariable} setSelectedVariable={setSelectedVariable} />
-              </Element>
-              <Element name="chart">
-                <LineChartWeather selectedVariable={selectedVariable} itemsIn={items} />
-              </Element>
-            </Grid>
           </section>
-        </Element>
-
-        {/* Gráfico
-        <Element name="grafico">
-          <section>
-            <Grid container spacing={5}>
-              <Grid
-                // size={{ xs: 12, md: 12 }}
-                size="auto"
-              >
-                <LineChartWeather itemsIn={items} />
-              </Grid>
-            </Grid>
-          </section>
-        </Element> */}
-
-        {/* Tabla */}
-        <Element name="historial">
-          <section>
-            <Grid container spacing={5}>
-              {/* <Grid size={{ xs: 12, md: 12 }}> */}
-              {/* Grid Anidado */}
-              {/* <Grid container spacing={2}> */}
-              {/* <Grid size={{ xs: 12, md: 3 }}>
-                    <ControlWeather />
-                  </Grid> */}
-              <Grid size={{ xs: 12, md: 12 }}>
-                <TableWeather itemsIn={items} />
-              </Grid>
-              {/* </Grid> */}
-              {/* </Grid> */}
-            </Grid>
-          </section>
-        </Element>
-
-
+        </Element>*/}
 
       </Grid>
-    </ThemeProvider>
+    </ThemeProvider >
   )
 }
 
