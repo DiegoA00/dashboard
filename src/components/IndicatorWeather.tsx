@@ -17,14 +17,12 @@ export default function IndicatorWeather(config: Indicator) {
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                // allignItems: 'center',
                 textAlign: 'center',
                 gap: 1,
                 borderRadius: 2,
                 backgroundColor: '#ffffff',
-                minWidth: 200,
+                minWidth: 180,
                 maxWidth: { xs: 300, sm: 400},
-                // width: { xs: '100%', sm: 100},
             }}
         >
             {config.icon && (

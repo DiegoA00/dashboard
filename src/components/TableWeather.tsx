@@ -87,9 +87,12 @@ export default function BasicTable(props: MyProp) {
                 </Grid>
             </Grid>
             <TableContainer
-                sx={{ width: '100%' }}
+                sx={{
+                    maxWidth: { xs: '260px', md: '100%' }, // Ajustar anchura según el tamaño de la pantalla
+                    maxHeight: { xs: '600px', md: '100%' }, // Establecer altura máxima para la tabla
+                }}
             >
-                <Table aria-label="simple table">
+                <Table stickyHeader aria-label="simple table"> {/* stickyHeader para mantener el encabezado visible */}
                     <TableHead>
                         <TableRow>
                             <TableCell align='center'><b>Fecha</b></TableCell>
@@ -122,14 +125,23 @@ export default function BasicTable(props: MyProp) {
                             ))}
                     </TableBody>
                 </Table>
-                <TablePagination
-                    rowsPerPageOptions={[8]} // Opciones de filas por página (fijo en 8)
-                    component="div"
-                    count={filteredRows.length} // Número total de filas
-                    rowsPerPage={rowsPerPage} // Número de filas por página
-                    page={page} // Página actual
-                    onPageChange={handleChangePage} // Manejador de cambio de página
-                />
+                <Box
+                    sx={{
+                        position: 'sticky',
+                        bottom: 0,
+                        backgroundColor: 'white', // Fondo blanco para que no se superponga con el contenido
+                        zIndex: 1, // Asegurarse de que esté por encima del contenido
+                    }}
+                >
+                    <TablePagination
+                        rowsPerPageOptions={[8]} // Opciones de filas por página (fijo en 8)
+                        component="div"
+                        count={filteredRows.length} // Número total de filas
+                        rowsPerPage={rowsPerPage} // Número de filas por página
+                        page={page} // Página actual
+                        onPageChange={handleChangePage} // Manejador de cambio de página
+                    />
+                </Box>
             </TableContainer>
         </Card>
     );

@@ -17,7 +17,6 @@ import { Link } from 'react-scroll/modules';
 
 const drawerWidth = 240;
 const navItems = [
-    { label: 'Inicio', to: 'inicio' },
     { label: 'Información', to: 'informacion' },
     { label: 'Gráfico', to: 'grafico' },
     { label: 'Historial', to: 'historial' }
@@ -31,9 +30,9 @@ export default function DrawerAppBar() {
     };
 
     const drawer = (
-        <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
+        <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center', backgroundColor: '#455A64' }} color={'#fff'}>
             <Typography variant="h6" sx={{ my: 2 }}>
-                Pronóstico Climático
+                Pronóstico Climático Guayaquil
             </Typography>
             <List>
                 {navItems.map((item) => (
@@ -74,7 +73,7 @@ export default function DrawerAppBar() {
                         component="div"
                         sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
                     >
-                        Pronóstico Climático
+                        Pronóstico Climático Guayaquil
                     </Typography>
                     <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
                         {navItems.map((item) => (

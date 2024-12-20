@@ -19,12 +19,8 @@ interface ControlWeatherProps {
 }
 
 export default function ControlWeather({ selectedVariable, setSelectedVariable }: ControlWeatherProps) {
-    {/* Constante de referencia a un elemento HTML */ }
-    // const descriptionRef = useRef<HTMLDivElement>(null);
+    
     const [description, setDescription] = useState('');
-
-    {/* Variable de estado y función de actualización */ }
-    // const [, setSelected] = useState(-1)
 
     {/* Arreglo de objetos */ }
     const items = [
@@ -33,27 +29,10 @@ export default function ControlWeather({ selectedVariable, setSelectedVariable }
         { "name": "Precipitación", "description": "Cantidad de agua que cae sobre una superficie en un período específico." },
     ]
 
-    {/* Arreglo de elementos JSX */ }
-    // const options = items.map((item, key) => <MenuItem key={key} value={key}>{item["name"]}</MenuItem>)
-
     useEffect(() => {
         const selectedItem = items.find((item) => item.name === selectedVariable);
         setDescription(selectedItem ? selectedItem.description : '');
     }, [selectedVariable]);
-
-
-    {/* Manejador de eventos */ }
-    // const handleChange = (event: SelectChangeEvent) => {
-
-    //     const idx = parseInt(event.target.value)
-    //     setSelected(idx);
-
-    //     {/* Modificación de la referencia descriptionRef */ }
-    //     if (descriptionRef.current !== null) {
-    //         descriptionRef.current.innerHTML = (idx >= 0) ? items[idx]["description"] : ""
-    //     }
-
-    // };
 
     const handleChange = (event: { target: { value: string; }; }) => {
         setSelectedVariable(event.target.value);
@@ -91,9 +70,6 @@ export default function ControlWeather({ selectedVariable, setSelectedVariable }
                                 {item.name}
                             </MenuItem>
                         ))}
-                        {/* <MenuItem key="-1" value="-1" disabled>Seleccione una variable</MenuItem> */}
-
-                        {/* {options} */}
 
                     </Select>
                 </FormControl>
@@ -101,7 +77,6 @@ export default function ControlWeather({ selectedVariable, setSelectedVariable }
 
             {/* Use la variable de estado para renderizar del item seleccionado */}
             <Typography
-                // ref={descriptionRef}
                 mt={2}
                 component="p"
                 color="text.secondary"
