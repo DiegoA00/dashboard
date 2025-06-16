@@ -14,8 +14,8 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 
 interface ControlWeatherProps {
-    selectedVariable: string;
-    setSelectedVariable: (value: string) => void;
+    readonly selectedVariable: string;
+    readonly setSelectedVariable: (value: string) => void;
 }
 
 export default function ControlWeather({ selectedVariable, setSelectedVariable }: ControlWeatherProps) {

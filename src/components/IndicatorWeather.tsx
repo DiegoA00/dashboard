@@ -9,7 +9,9 @@ interface Indicator {
     icon?: JSX.Element;
 }
 
-export default function IndicatorWeather(config: Indicator) {
+export default function IndicatorWeather(
+    config: Readonly<Indicator>
+) {
     return (
         <Paper
             sx={{

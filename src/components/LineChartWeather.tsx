@@ -8,7 +8,7 @@ interface MyProp {
     itemsIn: Item[];
 }
 
-export default function LineChartWeather(prop: MyProp) {
+export default function LineChartWeather(prop: Readonly<MyProp>) {
     const [rows, setRows] = useState<Item[]>([]);
 
     useEffect(() => {
