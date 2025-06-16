@@ -98,7 +98,7 @@ function App() {
   useEffect(() => {
     const request = async () => {
       {/* Referencia a las claves del LocalStorage: openWeatherMap y expiringTime */ }
-      const savedTextXML = localStorage.getItem("openWeatherMap") || "";
+      const savedTextXML = localStorage.getItem("openWeatherMap") ?? "";
       const expiringTime = localStorage.getItem("expiringTime");
 
       {/* Obtenga la estampa de tiempo actual */ }
@@ -165,15 +165,15 @@ function App() {
 
         const times = xml.getElementsByTagName("time")
 
-        const climate = times[0].getElementsByTagName("symbol")[0].getAttribute("name") || ""
-        const icon = times[0].getElementsByTagName("symbol")[0].getAttribute("var") || ""
+        const climate = times[0].getElementsByTagName("symbol")[0].getAttribute("name") ?? ""
+        const icon = times[0].getElementsByTagName("symbol")[0].getAttribute("var") ?? ""
         dataToIndicators.push({ "title": "Clima", "subtitle": "", "value": climate, "icon": <img src={`https://openweathermap.org/img/wn/${icon}@2x.png`} alt="weather icon" /> })
 
         const timezone = xml.getElementsByTagName("timezone")[0].innerHTML || ""
         const sun = xml.getElementsByTagName("sun")[0]
 
-        const sunriseUTC = sun.getAttribute("rise") || ""
-        const sunsetUTC = sun.getAttribute("set") || ""
+        const sunriseUTC = sun.getAttribute("rise") ?? ""
+        const sunsetUTC = sun.getAttribute("set") ?? ""
 
         const sunriseLocal = convertUTCToLocal(sunriseUTC, parseInt(timezone))
         const sunsetLocal = convertUTCToLocal(sunsetUTC, parseInt(timezone))
@@ -187,15 +187,15 @@ function App() {
         for (let i = 0; i < 40; i++) {
           const time = times[i]
 
-          const date = time.getAttribute("from")?.split('T')[0] || ""
+          const date = time.getAttribute("from")?.split('T')[0] ?? ""
 
-          const from = time.getAttribute("from")?.split('T')[1].slice(0, -3) || ""
-          const to = time.getAttribute("to")?.split('T')[1].slice(0, -3) || ""
+          const from = time.getAttribute("from")?.split('T')[1].slice(0, -3) ?? ""
+          const to = time.getAttribute("to")?.split('T')[1].slice(0, -3) ?? ""
 
-          const temperature = time.getElementsByTagName("temperature")[0].getAttribute("value") || ""
-          const precipitation = time.getElementsByTagName("precipitation")[0].getAttribute("probability") || ""
-          const humidity = time.getElementsByTagName("humidity")[0].getAttribute("value") || ""
-          const windSpeed = time.getElementsByTagName("windSpeed")[0].getAttribute("mps") || ""
+          const temperature = time.getElementsByTagName("temperature")[0].getAttribute("value") ?? ""
+          const precipitation = time.getElementsByTagName("precipitation")[0].getAttribute("probability") ?? ""
+          const humidity = time.getElementsByTagName("humidity")[0].getAttribute("value") ?? ""
+          const windSpeed = time.getElementsByTagName("windSpeed")[0].getAttribute("mps") ?? ""
 
 
           dataToItems.push({
