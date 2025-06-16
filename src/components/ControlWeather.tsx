@@ -65,8 +65,8 @@ export default function ControlWeather({ selectedVariable, setSelectedVariable }
                         value={selectedVariable}
                         onChange={handleChange}
                     >
-                        {items.map((item, index) => (
-                            <MenuItem key={index} value={item.name}>
+                        {items.map((item) => (
+                            <MenuItem key={item.name} value={item.name}>
                                 {item.name}
                             </MenuItem>
                         ))}

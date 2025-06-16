@@ -239,18 +239,22 @@ function App() {
           {
             indicators
               .map(
-                (indicator, idx) => (
-                  <Grid key={idx}
-                    size={{ xs: 12, lg: 6 }}
-                  >
-                    <IndicatorWeather
-                      title={indicator["title"]}
-                      subtitle={indicator["subtitle"]}
-                      value={indicator["value"]}
-                      icon={indicator.icon}
-                    />
-                  </Grid>
-                )
+                (indicator) => {
+                  // Use a unique key, fallback to JSON.stringify if no unique property exists
+                  const key = indicator.title ? indicator.title + (indicator.value ?? '') : JSON.stringify(indicator);
+                  return (
+                    <Grid key={key}
+                      size={{ xs: 12, lg: 6 }}
+                    >
+                      <IndicatorWeather
+                        title={indicator["title"]}
+                        subtitle={indicator["subtitle"]}
+                        value={indicator["value"]}
+                        icon={indicator.icon}
+                      />
+                    </Grid>
+                  );
+                }
               )
           }
         </Grid>

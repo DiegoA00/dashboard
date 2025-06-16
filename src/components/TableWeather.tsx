@@ -14,7 +14,7 @@ interface MyProp {
     itemsIn: Item[];
 }
 
-export default function BasicTable(props: Readonly<MyProp>) {
+export default function BasicTable(props: MyProp) {
     const [rows, setRows] = useState<Item[]>([]);
     const [filteredRows, setFilteredRows] = useState<Item[]>([]);
     const [page, setPage] = useState(0); // Página actual
