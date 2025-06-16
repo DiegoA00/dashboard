@@ -167,7 +167,7 @@ function App() {
 
         const climate = times[0].getElementsByTagName("symbol")[0].getAttribute("name") || ""
         const icon = times[0].getElementsByTagName("symbol")[0].getAttribute("var") || ""
-        dataToIndicators.push({ "title": "Clima", "subtitle": "", "value": climate, "icon": <img src={`https://openweathermap.org/img/wn/${icon}@2x.png`} /> })
+        dataToIndicators.push({ "title": "Clima", "subtitle": "", "value": climate, "icon": <img src={`https://openweathermap.org/img/wn/${icon}@2x.png`} alt="weather icon" /> })
 
         const timezone = xml.getElementsByTagName("timezone")[0].innerHTML || ""
         const sun = xml.getElementsByTagName("sun")[0]
